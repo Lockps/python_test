@@ -1,13 +1,22 @@
 import cv2 as cv
 
-img = cv.imread('pic.jpg')
 face_model = cv.CascadeClassifier('face-detect-model.xml')
-gray_scale = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-faces = face_model.detectMultiScale(gray_scale)
+cap = cv.VideoCapture(0) # open the default camera
 
-for (x, y, w, h) in faces:
-    cv.rectangle(img, (x, y), (x + w, y + h), (255, 255, 0), 2)
+while True:
+    ret, frame = cap.read() # read a frame from the camera
+    if not ret: # if there was an error reading the frame
+        break
+    
+    gray_scale = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    faces = face_model.detectMultiScale(gray_scale)
+    
+    for (x, y, w, h) in faces:
+        cv.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 0), 2)
+        
+    cv.imshow('frame', frame)
+    if cv.waitKey(1) == ord('q'): # exit on pressing 'q' key
+        break
 
-cv.imshow('image', img)
-cv.waitKey(0)
+cap.release()
 cv.destroyAllWindows()
